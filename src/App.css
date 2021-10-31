@@ -15,7 +15,6 @@
 }
 
 html{
-  overflow: scroll !important;
   background-color: var(--bg);
   background-image: url('./neptune.png');
   background-repeat: no-repeat;
@@ -43,14 +42,15 @@ body{
 }
 
 .wrapper {
-  overflow: scroll;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: max-conten\\
+  min-height: 100vh;
+  height: max-content;
+  overflow: hidden;
 
 }
 
@@ -184,6 +184,8 @@ body{
   padding: 50px;
   border-radius: 50px;
   width: 75%;
+  min-midth: 40em;
+  max-width: 60em;
 }
 .t-card{
   background-color: rgba(0, 0, 0, 0.33);

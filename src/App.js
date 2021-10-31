@@ -48,12 +48,13 @@ function Currency({pair, pairs, currencies, label, selected, setPair, setPairs, 
 }
 
 
-function unpack(obj) {
+function unpack(obj, pair, ctype, amount, price) {
     return <React.Fragment>
+        <h3>Чтобы {["купить", "продать"][+(ctype == "bids")]} {amount} {pair[0]} по {price} {pair[1]}, нужно:</h3>
         {
             Object.entries(obj.exchanges).map(
                 ([key, value]) => <div className= "text">
-                    {value.name}: {value.amount.toFixed(8)} @ {value.price.toFixed(8)}
+                    На <b>{value.name}</b>: {["купить", "продать"][+(ctype == "bids")]} <b>{value.amount.toFixed(8)}</b> по <b>{value.price.toFixed(8)}</b>
                 </div>
             )
         }
@@ -90,11 +91,12 @@ function App() {
                     <div><span>Рыночная цена: </span><span>{((result.bids.price + result.asks.price) / 2).toFixed(8)}</span></div>
 
                     <Accordion value= {result.bids.amount.toFixed(8)+" @ "+ result.bids.price.toFixed(8)} title="Продажа" id="accordion-1">
-
-                        {unpack(result.bids)}
+                        {(amount > result.bids.amount) ? <p className="warning">Обратите внимание, вы сможете продать меньше монет, чем хотите</p> : null}
+                        {unpack(result.bids, pair, "bids", result.bids.amount, result.bids.price)}
                     </Accordion>
                     <Accordion value={result.asks.amount.toFixed(8)+" @ "+ result.asks.price.toFixed(8)} title="Покупка" id="accordion-1">
-                        {unpack(result.asks)}
+                        {(amount > result.asks.amount) ? <p className="warning">Обратите внимание, вы сможете купить меньше монет, чем хотите</p> : null}
+                        {unpack(result.asks, pair, "asks", result.asks.amount, result.asks.price)}
                     </Accordion>
                 </div>): null}
             </div>
