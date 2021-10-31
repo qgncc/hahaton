@@ -15,6 +15,7 @@
 }
 
 html{
+  overflow: scroll !important;
   background-color: var(--bg);
   background-image: url('./neptune.png');
   background-repeat: no-repeat;
@@ -37,11 +38,12 @@ body{
 
 .text{
   font-size: 0.9rem;
-  padding: 0 10px;
+  padding: 10px 10px;
   vertical-align: bottom;
 }
 
 .wrapper {
+  overflow: scroll;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -204,4 +206,9 @@ body{
 
 .close{
   display: none;
+}
+
+.accordion-title{
+  font-family: 'Chakra Petch', -apple-system, sans-serif;
+  font-weight: 700;
 }

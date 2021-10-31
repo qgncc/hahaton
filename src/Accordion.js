@@ -8,10 +8,10 @@ function Accordion({title, id, value, children, ...props}) {
     return (
         <React.Fragment>
             <div className="result t-result" data-accordion_id={id} onClick={() => setOpen(!isOpen)}>
-                <span className="text"><h4><UilAngleRightB className="icon"/>{title}</h4></span>
-                <span className="text"><h5>{value}</h5></span>
+                <span className="text accordion-title"><h3><UilAngleRightB className="icon"/>{title}</h3></span>
+                <span className="text accordion-title"><h3>{value}</h3></span>
             </div>
-            <div id={id}>
+            <div className="text" id={id}>
                 {isOpen ? children : null}
             </div>
         </React.Fragment>

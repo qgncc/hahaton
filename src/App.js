@@ -53,7 +53,7 @@ function unpack(obj) {
     return <React.Fragment>
         {
             Object.entries(obj.exchanges).map(
-                ([key, value]) => <div>
+                ([key, value]) => <div className= "text">
                     {value.name}: {value.amount.toFixed(8)} @ {value.price.toFixed(8)}
                 </div>
             )
@@ -103,10 +103,11 @@ function App() {
                 {hasResult?(<div id="result" className="result-wrapper">
                     <div><span>Рыночная цена: </span><span>{((result.bids.price + result.asks.price) / 2).toFixed(8)}</span></div>
 
-                    <Accordion value= {result.bids.price.toFixed(8)} title="Продажа" id="accordion-1">
+                    <Accordion value= {result.bids.amount.toFixed(8)+" @ "+ result.bids.price.toFixed(8)} title="Продажа" id="accordion-1">
+
                         {unpack(result.bids)}
                     </Accordion>
-                    <Accordion value={result.asks.price.toFixed(8)} title="Покупка" id="accordion-1">
+                    <Accordion value={result.asks.amount.toFixed(8)+" @ "+ result.asks.price.toFixed(8)} title="Покупка" id="accordion-1">
                         {unpack(result.asks)}
                     </Accordion>
                 </div>): null}
