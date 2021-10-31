@@ -1,8 +1,8 @@
 import React from 'react'
 import { useState } from 'react'
 import Accordion from './Accordion'
-import {UilArrowRight} from "@iconscout/react-unicons"
-import hardPairs from './pairs.js'
+import { UilArrowRight } from "@iconscout/react-unicons"
+import { usablePairs, currencies } from './pairs.js'
 
 
 import './App.css';
@@ -34,13 +34,12 @@ function Currency({pair, pairs, values, label, selected, setPair, setPairs, inde
             setPair(pair.map(
                 (e,i) => (i === index? event.target.value: e)
             ));
-            setPairs(hardPairs.filter( (l,k) => l[k] == pair[k]))
+            setPairs(usablePairs.filter( (e, i, arr) => e[i] == pair[i]).filter())
         }}>
             {
-                pairs.map(
+                pairs.filter((e, i) => pairs.map(x => x[index]).indexOf(e) == i).map(
                     e => <option selected={selected === e[index]} value={e[index]}>{e[index]}</option>
                 )
-
             }
 
 
@@ -63,25 +62,12 @@ function unpack(obj) {
 
 
 
-
-
-
-
 function App() {
     const [pair, setPair] = useState(["BTC","USDT"]);
     const [amount, setAmount] = useState(0);
     const [hasResult, setHasResult] = useState(false);
     const [result, setResult] = useState(0);
-    const [pairs, setPairs] = useState(hardPairs)
-
-    const values = [
-        "ZRX", "BAT", "1INCH", "DYDX", "SUSHI" , "USDT", "BTC","BNB","ADA","SOL","XRP","DOT","SHIB","DOGE","USDC","LUNA","UNI","WBTC","AVAX","LINK",
-        "BUSD","LTC","MATIC","ALGO","BCH","XLM","AXS","VET","ATOM","ICP","THETA","TRX","FIL","ETC","FTT","FTM","DAI","BTCB","MANA","HBAR","XTZ",
-        "CRO","NEAR","EGLD","XMR","EOS","GRT","FLOW","CAKE","AAVE","KLAY","MIOTA","RUNE","XEC","QNT","ONE","LEO","BSV","KSM",
-        "NEO","HNT","WAVES","UST","CHZ","BTT","MKR","ZEC","STX","ENJ","COMP","CELO","DASH","AMP","TFUEL",
-
-    ];
-
+    const [pairs, setPairs] = useState(usablePairs)
 
 
     return (
