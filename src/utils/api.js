@@ -1,4 +1,4 @@
-
+import * as ccxt from 'ccxt';
 
 
 const exchangeIDs = [
@@ -24,7 +24,7 @@ const timedCache = (f) => {
     const wrapper = async (pair) => {
         let pairStr = pair.join("/");
         if (pairStr in values) {
-            if values[pairStr].ts > Date.now() {
+            if (values[pairStr].ts > Date.now()) {
                 return {...values[pair].value, cached: true}
             }
             let value = await f(pair);
@@ -38,7 +38,7 @@ const timedCache = (f) => {
 
 const genGetter = (exchange) => {
     let getter = async (pair, isReversed = false) => {
-        let orders = await exchange.fetchOrderBook(symbol);
+        let orders = await exchange.fetchOrderBook(pair);
         let result = {};
         ["bids", "asks"].map(
             key => {
@@ -48,7 +48,7 @@ const genGetter = (exchange) => {
                         amount: order[1], 
                         exchange: exchange.id
                     })
-                ).sort(a, b => a.amount - b.amount)
+                ).sort((a, b) => a.amount - b.amount)
                 if (key == "bids") {
                     result[key].reverse();
                 }
@@ -68,7 +68,7 @@ const getOrders = async (pair) => {
         bids: [],
         asks: [],
     };
-    for getter of getters {
+    for (let getter of getters) {
         let cexOrders = await getter(pair);
         orders.bids.push(...cexOrders.bids);
         orders.asks.push(...cexOrders.asks);
@@ -76,7 +76,7 @@ const getOrders = async (pair) => {
 
     ["bids", "asks"].map(
         key => {
-            orders[key].sort(a, b => a.price - b.price)
+            orders[key].sort((a, b) => a.price - b.price)
         }
     );
     return orders;
@@ -88,7 +88,7 @@ const fillOrders = async (pair, amount) => {
         bids: [],
         asks: [],
     };
-    orders = await getOrders(pair);
+    let orders = await getOrders(pair);
 
     ["bids", "asks"].map(
         key => {
@@ -131,7 +131,7 @@ const composePrices = (orderList) => {
 
 
 const calcPrices = (orderList) => {
-    let amount = orderList.reduce(a, b => a + b.amount, 0);
+    let amount = orderList.reduce((a, b) => a + b.amount, 0);
     let fullPrice = orderList.reduce((a, b) => a + b.price * b.amount);
     let price = fullPrice / amount;
     return {amount: amount, price: price, fullPrice: fullPrice};
@@ -141,13 +141,13 @@ const getPrices = async (pair, amount) => {
     let filled = await fillOrders(pair, amount)
     let result = {};
     ["bids", "asks"].map(
-        key => { result[key] = {...calc_prices(filled[key]), exchanges: composePrices(filled[key])} }
+        key => { result[key] = {...calcPrices(filled[key]), exchanges: composePrices(filled[key])} }
     )
     return result;
 }
 
 
-const updateExchange = (pair, i) => {
+const updateExchange = async (pair, i) => {
     if (0 <= i && i < getters.length) {
         return {
             next: (!(await getters[i](pair)).cached && i + 1 < exchanges.length) ? {
