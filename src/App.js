@@ -28,7 +28,7 @@ function Input ({setAmount, ...props}) {
         />
     )
 }
-function Currency({pair, pairs, values, label, selected, setPair, setPairs, index, ...props}) {
+function Currency({pair, pairs, currencies, label, selected, setPair, setPairs, index, ...props}) {
     return(
         <select id="currency" className="select t-select" onChange={(event)=>{
             setPair(pair.map(
@@ -36,8 +36,8 @@ function Currency({pair, pairs, values, label, selected, setPair, setPairs, inde
             ));
             setPairs(usablePairs.filter( (e, i, arr) => e[i] == pair[i]).filter())
         }}>
-            {
-                pairs.filter((e, i) => pairs.map(x => x[index]).indexOf(e) == i).map(
+            {   //.filter((e, i) => pairs.map(x => x[index]).indexOf(e) == i)
+                pairs.map(
                     e => <option selected={selected === e[index]} value={e[index]}>{e[index]}</option>
                 )
             }
@@ -76,9 +76,9 @@ function App() {
                 <h1 className="title t-title">Neptune Foundation</h1>
                 <div className="form">
                     <Input setAmount = {setAmount}/>
-                    <Currency pair={pair} setPair={setPair} pairs={pairs} setPairs={setPairs} values={values} label="$" selected={"BTC"} index={0}/>
+                    <Currency pair={pair} setPair={setPair} pairs={pairs} setPairs={setPairs} currencies={currencies} label="$" selected={"BTC"} index={0}/>
                     <span className="text">/</span>
-                    <Currency pair={pair} setPair={setPair} pairs={pairs} setPairs={setPairs} values={values} label="$" selected={"USDT"} index={1}/>
+                    <Currency pair={pair} setPair={setPair} pairs={pairs} setPairs={setPairs} currencies={currencies} label="$" selected={"USDT"} index={1}/>
                     <button className="submit t-submit" type="submit" value="Calc" onClick={async () =>{
 
                         setResult(await getPrices(pair, amount));
