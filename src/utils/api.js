@@ -20,7 +20,7 @@ const exchangeIDs = [
 const exchanges = exchangeIDs.map(id => new ccxt[id]());
 
 const timedCache = (f) => {
-    values = {}
+    let values = {}
     const wrapper = async (pair) => {
         let pairStr = pair.join("/");
         if (pairStr in values) {
@@ -68,12 +68,11 @@ const getOrders = async (pair) => {
         bids: [],
         asks: [],
     };
-
-    getters.map(getter => {
+    for getter of getters {
         let cexOrders = await getter(pair);
         orders.bids.push(...cexOrders.bids);
         orders.asks.push(...cexOrders.asks);
-    });
+    }
 
     ["bids", "asks"].map(
         key => {
@@ -139,7 +138,7 @@ const calcPrices = (orderList) => {
 }
 
 const getPrices = async (pair, amount) => {
-    filled = await fillOrders(pair, amount)
+    let filled = await fillOrders(pair, amount)
     let result = {};
     ["bids", "asks"].map(
         key => { result[key] = {...calc_prices(filled[key]), exchanges: composePrices(filled[key])} }
@@ -148,7 +147,7 @@ const getPrices = async (pair, amount) => {
 }
 
 
-const updateExchange = (pair, i) {
+const updateExchange = (pair, i) => {
     if (0 <= i && i < getters.length) {
         return {
             next: (!(await getters[i](pair)).cached && i + 1 < exchanges.length) ? {
