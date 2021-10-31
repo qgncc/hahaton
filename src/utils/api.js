@@ -27,10 +27,10 @@ const timedCache = (f) => {
             if (values[pairStr].ts > Date.now()) {
                 return {...values[pair].value, cached: true}
             }
-            let value = await f(pair);
-            values[pair] = {ts: Date.now() + 3600 * 1000, value: value}
-            return {...value, cached: false}
         }
+        let value = await f(pair);
+        values[pair] = {ts: Date.now() + 3600 * 1000, value: value}
+        return {...value, cached: false}
     }
     return wrapper;
 }
@@ -38,7 +38,13 @@ const timedCache = (f) => {
 
 const genGetter = (exchange) => {
     let getter = async (pair, isReversed = false) => {
-        let orders = await exchange.fetchOrderBook(pair);
+        let orders = {}
+        try {
+            orders = await exchange.fetchOrderBook(pair, 50);
+        } catch (e) {
+            return {"bids": [], "asks": []}
+        }
+
         let result = {};
         ["bids", "asks"].map(
             key => {
@@ -96,7 +102,7 @@ const fillOrders = async (pair, amount) => {
             orders[key].map(
                 order => {
                     if (filledAmount > amount) {
-                        return
+                        return filled
                     }
 
                     if (filledAmount + order.amount >= amount) {
@@ -127,6 +133,7 @@ const composePrices = (orderList) => {
             result[exchange] = calcPrices(value)
         }
     )
+    return exchanges
 }
 
 
@@ -149,8 +156,9 @@ const getPrices = async (pair, amount) => {
 
 const updateExchange = async (pair, i) => {
     if (0 <= i && i < getters.length) {
+        let result = await getters[i](pair);
         return {
-            next: (!(await getters[i](pair)).cached && i + 1 < exchanges.length) ? {
+            next: (!result.cached && i + 1 < exchanges.length) ? {
                 name: exchanges[i + 1].name,
                 index: i + 1,
             } : null
